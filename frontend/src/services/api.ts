@@ -4,12 +4,15 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+// ⚠️ IMPORTANTE
+// NO usamos localStorage acá porque este archivo corre en SSR también
+
+export function setAuthToken(token: string | null) {
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common.Authorization;
   }
-  return config;
-});
+}
 
 export default api;

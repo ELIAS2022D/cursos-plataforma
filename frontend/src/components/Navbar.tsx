@@ -1,30 +1,22 @@
-'use client';
-
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <nav className="border-b bg-white">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-indigo-600">
-          CursosPro
-        </Link>
+    <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
+      <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+        <span className="text-lg font-semibold">CursosPro</span>
 
-        <div className="flex items-center gap-6">
-          <Link href="/" className="text-gray-600 hover:text-indigo-600">
-            Inicio
-          </Link>
-          <Link href="/nosotros" className="text-gray-600 hover:text-indigo-600">
-            Nosotros
-          </Link>
+        <nav className="flex items-center gap-6 text-sm text-gray-600">
+          <Link href="/">Inicio</Link>
+          <Link href="/nosotros">Nosotros</Link>
           <Link
             href="/login"
-            className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+            className="rounded-md bg-black px-4 py-2 text-white hover:bg-gray-800"
           >
             Ingresar
           </Link>
-        </div>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 }

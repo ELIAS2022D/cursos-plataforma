@@ -1,68 +1,45 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-import api from '@/services/api';
+import Navbar from "@/components/Navbar";
 
 export default function HomePage() {
-  const [courses, setCourses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function getCourses() {
-      try {
-        const res = await api.get('/courses');
-        setCourses(res.data);
-      } catch (error) {
-        console.error('Error cargando cursos', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    getCourses();
-  }, []);
-
   return (
-    <div className="space-y-16">
+    <>
+      <Navbar />
+
       {/* HERO */}
-      <section className="text-center py-20 bg-gray-50">
-        <h1 className="text-4xl font-bold mb-4">
-          Aprendé habilidades reales
+      <section className="mx-auto max-w-7xl px-6 py-24 text-center">
+        <h1 className="text-5xl font-bold tracking-tight mb-6">
+          Aprendé habilidades que generan valor real
         </h1>
-        <p className="text-gray-600">
-          Cursos diseñados para llevarte al siguiente nivel
+        <p className="mx-auto max-w-2xl text-lg text-gray-600">
+          Formación práctica, clara y enfocada en resultados reales para el mercado actual.
         </p>
+
+        <div className="mt-10">
+          <button className="rounded-lg bg-black px-6 py-3 text-white hover:bg-gray-800">
+            Ver cursos
+          </button>
+        </div>
       </section>
 
       {/* CURSOS */}
-      <section className="max-w-6xl mx-auto px-4">
-        <h2 className="text-2xl font-semibold mb-6">
-          Nuestros Cursos
-        </h2>
+      <section className="mx-auto max-w-7xl px-6 pb-24">
+        <h2 className="mb-10 text-3xl font-semibold">Nuestros cursos</h2>
 
-        {loading ? (
-          <p className="text-gray-500">Cargando cursos...</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {courses.map((course: any) => (
-              <div
-                key={course._id}
-                className="border p-4 rounded-lg shadow hover:shadow-md transition"
-              >
-                <h3 className="font-bold text-lg">
-                  {course.title}
-                </h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  {course.description}
-                </p>
-                <p className="mt-3 font-semibold text-indigo-600">
-                  ${course.price}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="grid gap-6 md:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="rounded-xl border bg-white p-6 shadow-sm hover:shadow-md transition"
+            >
+              <h3 className="text-lg font-semibold mb-2">Curso {i}</h3>
+              <p className="text-sm text-gray-600">
+                Descripción breve del curso, clara y directa.
+              </p>
+              <p className="mt-4 font-bold">$19.999</p>
+            </div>
+          ))}
+        </div>
       </section>
-    </div>
+    </>
   );
 }

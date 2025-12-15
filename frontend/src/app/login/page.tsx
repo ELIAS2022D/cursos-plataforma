@@ -1,49 +1,32 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import api from '@/services/api';
-
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    const res = await api.post('/users/login', {
-      email,
-      password,
-    });
-
-    localStorage.setItem('token', res.data.token);
-    router.push('/dashboard');
-  }
-
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-sm mx-auto mt-20 space-y-4"
-    >
-      <h1 className="text-2xl font-bold">Login</h1>
+    <div className="min-h-[70vh] flex items-center justify-center px-6">
+      <div className="w-full max-w-md border rounded-2xl p-8">
+        <h1 className="text-2xl font-bold mb-6 text-center">
+          Ingresar
+        </h1>
 
-      <input
-        className="w-full border p-2"
-        placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <form className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full border rounded-lg px-4 py-2"
+          />
 
-      <input
-        type="password"
-        className="w-full border p-2"
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            className="w-full border rounded-lg px-4 py-2"
+          />
 
-      <button className="w-full bg-black text-white py-2">
-        Entrar
-      </button>
-    </form>
+          <button
+            type="submit"
+            className="w-full py-2 rounded-lg bg-black text-white hover:bg-gray-800"
+          >
+            Entrar
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
