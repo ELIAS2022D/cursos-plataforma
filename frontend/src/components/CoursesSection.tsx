@@ -1,4 +1,4 @@
-import CourseCard from "./CourseCard";
+import CourseCard from "./courseCard";
 
 export default function CoursesSection({ courses }: any) {
   return (

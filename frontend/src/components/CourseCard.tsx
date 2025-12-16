@@ -1,20 +1,39 @@
-export default function CourseCard({ course }: any) {
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+
+type CourseCardProps = {
+  title: string
+  description: string
+  price: number
+}
+
+export default function CourseCard({
+  title,
+  description,
+  price,
+}: CourseCardProps) {
   return (
-    <div className="bg-bg-light border border-border-light rounded-lg p-6 hover:shadow-md transition">
-      <h3 className="text-xl font-heading font-semibold text-text-primary mb-2">
-        {course.title}
-      </h3>
-      <p className="text-text-secondary text-sm mb-4">
-        {course.description}
-      </p>
-      <div className="flex justify-between items-center">
-        <span className="font-bold text-accent-blue">
-          ${course.price}
-        </span>
-        <button className="text-accent-blue hover:underline">
-          Ver más
-        </button>
-      </div>
-    </div>
-  );
+    <Card className="flex flex-col justify-between">
+      <CardHeader className="space-y-2">
+        <h3 className="text-lg font-semibold leading-tight">
+          {title}
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          {description}
+        </p>
+      </CardHeader>
+
+      <CardContent>
+        <p className="text-xl font-bold">
+          ${price}
+        </p>
+      </CardContent>
+
+      <CardFooter>
+        <Button className="w-full">
+          Ver curso
+        </Button>
+      </CardFooter>
+    </Card>
+  )
 }

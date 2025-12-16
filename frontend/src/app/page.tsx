@@ -1,45 +1,57 @@
-import Navbar from "@/components/Navbar";
+import CourseCard from "@/components/courseCard"
+
+const mockCourses = [
+  {
+    id: 1,
+    title: "Fullstack Web",
+    description: "Aprendé a crear aplicaciones web modernas",
+    price: 120,
+  },
+  {
+    id: 2,
+    title: "Backend con Node",
+    description: "APIs robustas con NestJS y MongoDB",
+    price: 90,
+  },
+  {
+    id: 3,
+    title: "Frontend Profesional",
+    description: "React, Next.js y buenas prácticas",
+    price: 100,
+  },
+]
 
 export default function HomePage() {
   return (
-    <>
-      <Navbar />
-
+    <div className="space-y-24">
       {/* HERO */}
-      <section className="mx-auto max-w-7xl px-6 py-24 text-center">
-        <h1 className="text-5xl font-bold tracking-tight mb-6">
+      <section className="space-y-6">
+        <h1 className="text-4xl font-bold tracking-tight">
           Aprendé habilidades que generan valor real
         </h1>
-        <p className="mx-auto max-w-2xl text-lg text-gray-600">
-          Formación práctica, clara y enfocada en resultados reales para el mercado actual.
+        <p className="max-w-2xl text-muted-foreground text-lg">
+          Formación práctica, clara y enfocada en resultados reales
+          para el mercado actual.
         </p>
-
-        <div className="mt-10">
-          <button className="rounded-lg bg-black px-6 py-3 text-white hover:bg-gray-800">
-            Ver cursos
-          </button>
-        </div>
       </section>
 
       {/* CURSOS */}
-      <section className="mx-auto max-w-7xl px-6 pb-24">
-        <h2 className="mb-10 text-3xl font-semibold">Nuestros cursos</h2>
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold">
+          Nuestros cursos
+        </h2>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="rounded-xl border bg-white p-6 shadow-sm hover:shadow-md transition"
-            >
-              <h3 className="text-lg font-semibold mb-2">Curso {i}</h3>
-              <p className="text-sm text-gray-600">
-                Descripción breve del curso, clara y directa.
-              </p>
-              <p className="mt-4 font-bold">$19.999</p>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {mockCourses.map(course => (
+            <CourseCard
+              key={course.id}
+              title={course.title}
+              description={course.description}
+              price={course.price}
+            />
           ))}
         </div>
       </section>
-    </>
-  );
+    </div>
+  )
 }

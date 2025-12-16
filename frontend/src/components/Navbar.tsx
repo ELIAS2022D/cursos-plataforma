@@ -1,22 +1,37 @@
-import Link from "next/link";
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
-      <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
-        <span className="text-lg font-semibold">CursosPro</span>
+    <header className="border-b bg-background">
+      <div className="container flex h-16 items-center justify-between">
+        <Link
+          href="/"
+          className="text-lg font-semibold tracking-tight"
+        >
+          CursosPro
+        </Link>
 
-        <nav className="flex items-center gap-6 text-sm text-gray-600">
-          <Link href="/">Inicio</Link>
-          <Link href="/nosotros">Nosotros</Link>
+        <nav className="flex items-center gap-6">
           <Link
-            href="/login"
-            className="rounded-md bg-black px-4 py-2 text-white hover:bg-gray-800"
+            href="/"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
           >
-            Ingresar
+            Inicio
           </Link>
+
+          <Link
+            href="/nosotros"
+            className="text-sm text-muted-foreground hover:text-foreground transition"
+          >
+            Nosotros
+          </Link>
+
+          <Button variant="outline" size="sm">
+            Ingresar
+          </Button>
         </nav>
       </div>
     </header>
-  );
+  )
 }
