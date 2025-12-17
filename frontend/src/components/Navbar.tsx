@@ -27,8 +27,8 @@ export default function Navbar() {
             Nosotros
           </Link>
 
-          <Button variant="outline" size="sm">
-            Ingresar
+          <Button asChild variant="outline" size="sm">
+            <Link href="/login">Ingresar</Link>
           </Button>
         </nav>
       </div>

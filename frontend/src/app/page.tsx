@@ -1,27 +1,9 @@
+import { getCourses } from "@/services/courses"
 import CourseCard from "@/components/courseCard"
 
-const mockCourses = [
-  {
-    id: 1,
-    title: "Fullstack Web",
-    description: "Aprendé a crear aplicaciones web modernas",
-    price: 120,
-  },
-  {
-    id: 2,
-    title: "Backend con Node",
-    description: "APIs robustas con NestJS y MongoDB",
-    price: 90,
-  },
-  {
-    id: 3,
-    title: "Frontend Profesional",
-    description: "React, Next.js y buenas prácticas",
-    price: 100,
-  },
-]
+export default async function HomePage() {
+  const courses = await getCourses()
 
-export default function HomePage() {
   return (
     <div className="space-y-24">
       {/* HERO */}
@@ -42,9 +24,9 @@ export default function HomePage() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {mockCourses.map(course => (
+          {courses.map((course: any) => (
             <CourseCard
-              key={course.id}
+              key={course._id}
               title={course.title}
               description={course.description}
               price={course.price}
