@@ -1,5 +1,5 @@
 import { getCourses } from "@/services/courses"
-import CourseCard from "@/components/courseCard"
+import CourseCard from "@/components/courses/CourseCard"
 
 export default async function HomePage() {
   const courses = await getCourses()
@@ -27,6 +27,7 @@ export default async function HomePage() {
           {courses.map((course: any) => (
             <CourseCard
               key={course._id}
+              id={course._id}
               title={course.title}
               description={course.description}
               price={course.price}

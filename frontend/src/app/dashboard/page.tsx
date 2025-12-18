@@ -1,45 +1,45 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { getMyCourses } from "@/services/courses"
-import CourseCard from "@/components/courseCard"
+import CourseCard from "@/components/courses/CourseCard"
 
 export default function DashboardPage() {
-  const [courses, setCourses] = useState([])
+  const [courses, setCourses] = useState<any[]>([])
+  const router = useRouter()
 
-  // 🔐 PASO 4 – PROTECCIÓN
   useEffect(() => {
     const token = localStorage.getItem("token")
-    if (!token) {
-      window.location.href = "/login"
-    }
-  }, [])
+    if (!token) router.push("/login")
+  }, [router])
 
-  // 📦 CARGA DE CURSOS
   useEffect(() => {
     getMyCourses()
       .then(setCourses)
-      .catch(err => {
-        console.error("Error cargando cursos", err)
-      })
+      .catch(console.error)
   }, [])
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold">Mis cursos</h1>
+      <h1 className="text-2xl font-semibold">
+        Mis cursos
+      </h1>
 
       {courses.length === 0 ? (
         <p className="text-muted-foreground">
-          Todavía no estás inscripto en ningún curso.
+          Todavía no compraste ningún curso.
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {courses.map((course: any) => (
+          {courses.map((enrollment: any) => (
             <CourseCard
-              key={course._id}
-              title={course.title}
-              description={course.description}
-              price={course.price}
+              key={enrollment._id}
+              id={enrollment.courseId._id}
+              title={enrollment.courseId.title}
+              description={enrollment.courseId.description}
+              price={enrollment.courseId.price}
+              purchased
             />
           ))}
         </div>
