@@ -1,9 +1,18 @@
-import LoginForm from "@/components/auth/loginForm"
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import LoginForm from "@/components/auth/loginForm";
 
 export default function LoginPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/40 px-4">
-      <LoginForm />
-    </div>
-  )
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, []);
+
+  return <LoginForm />;
 }

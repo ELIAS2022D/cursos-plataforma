@@ -24,4 +24,24 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
+
+  // ✅ NUEVO: traer cursos del usuario
+  async getCourses(userId: string) {
+    const user = await this.userModel
+      .findById(userId)
+      .populate('courses');
+
+    if (!user) throw new NotFoundException('User not found');
+
+    return user.courses;
+  }
+
+  // (opcional, para más adelante)
+  async addCourse(userId: string, courseId: string) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $addToSet: { courses: courseId } },
+      { new: true },
+    );
+  }
 }
