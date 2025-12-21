@@ -1,7 +1,7 @@
-import api from "@/services/api"
+import api from "./api"
 
-export async function purchaseCourse(courseId: string) {
-  const res = await api.post("/payments/purchase", {
+export const purchaseCourse = async (courseId: string) => {
+  const res = await api.post("/payments/create", {
     courseId,
   })
 

@@ -7,6 +7,9 @@ import { AuthGuard } from '@nestjs/passport';
 export class EnrollmentsController {
   constructor(private enrollmentsService: EnrollmentsService) {}
 
+  /**
+   * Retorna todos los enrollments del usuario logueado
+   */
   @Get('me')
   getMyEnrollments(@Req() req) {
     return this.enrollmentsService.findUserEnrollments(req.user.sub);

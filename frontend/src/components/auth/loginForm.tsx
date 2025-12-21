@@ -3,48 +3,74 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { login } from "@/services/auth"
-import { setAuthToken } from "@/services/api"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 
 export default function LoginForm() {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setLoading(true)
+    setError(null)
 
-    const res = await login({ email, password })
-    const { access_token, user } = res.data
+    try {
+      const data = await login({ email, password })
 
-    setAuthToken(access_token)
-    localStorage.setItem("token", access_token)
-    localStorage.setItem("user", JSON.stringify(user))
+      // ✅ Guardar token
+      localStorage.setItem("token", data.access_token)
 
-    router.refresh()        // 🔄 refresca Navbar + layout
-    router.push("/dashboard") // 🚀 redirige
-    window.location.href = "/dashboard"
+      // 🔁 Redirección post login
+      const redirect = localStorage.getItem("redirectAfterLogin")
+      if (redirect) {
+        localStorage.removeItem("redirectAfterLogin")
+        router.replace(redirect)
+      } else {
+        router.replace("/dashboard")
+      }
+    } catch (err) {
+      setError("Credenciales incorrectas")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto">
       <div>
-        <Label>Email</Label>
-        <Input value={email} onChange={e => setEmail(e.target.value)} />
-      </div>
-
-      <div>
-        <Label>Password</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
       </div>
 
-      <Button className="w-full">Ingresar</Button>
+      <div>
+        <Label htmlFor="password">Contraseña</Label>
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+
+      {error && (
+        <p className="text-sm text-red-500">{error}</p>
+      )}
+
+      <Button type="submit" className="w-full" disabled={loading}>
+        {loading ? "Ingresando..." : "Ingresar"}
+      </Button>
     </form>
   )
 }

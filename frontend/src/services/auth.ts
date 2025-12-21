@@ -1,16 +1,17 @@
-import api from "./api";
+import api from "./api"
 
-export const register = (data: {
-  fullName: string;
-  email: string;
-  password: string;
-}) => {
-  return api.post("/auth/register", data);
-};
+interface LoginPayload {
+  email: string
+  password: string
+}
 
-export const login = (data: {
-  email: string;
-  password: string;
-}) => {
-  return api.post("/auth/login", data);
-};
+interface LoginResponse {
+  access_token: string
+}
+
+export const login = async (
+  payload: LoginPayload
+): Promise<LoginResponse> => {
+  const res = await api.post<LoginResponse>("/auth/login", payload)
+  return res.data
+}

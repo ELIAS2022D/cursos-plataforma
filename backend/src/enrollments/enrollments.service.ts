@@ -11,23 +11,19 @@ export class EnrollmentsService {
   ) {}
 
   /**
-   * Crear inscripción (cuando el usuario intenta comprar)
+   * Crea un nuevo enrollment con estado 'pending'
    */
-  async createEnrollment(userId: string, courseId: string) {
-    return this.enrollmentModel.findOneAndUpdate(
-      {
-        userId: new Types.ObjectId(userId),
-        courseId: new Types.ObjectId(courseId),
-      },
-      {
-        status: 'pending',
-      },
-      { upsert: true, new: true },
-    );
+  async create(userId: string, courseId: string) {
+    return this.enrollmentModel.create({
+      userId: new Types.ObjectId(userId),
+      courseId: new Types.ObjectId(courseId),
+      status: 'pending',
+      paymentProvider: 'mercadopago',
+    });
   }
 
   /**
-   * Marcar inscripción como pagada (webhook MP)
+   * Marca un enrollment como pagado (status = 'paid')
    */
   async markAsPaid(userId: string, courseId: string) {
     return this.enrollmentModel.findOneAndUpdate(
@@ -35,22 +31,27 @@ export class EnrollmentsService {
         userId: new Types.ObjectId(userId),
         courseId: new Types.ObjectId(courseId),
       },
-      {
-        status: 'paid',
-      },
+      { status: 'paid' },
       { new: true },
     );
   }
 
   /**
-   * Obtener cursos pagos del usuario
+   * Buscar un enrollment por usuario y curso
+   */
+  async findByUserAndCourse(userId: string, courseId: string) {
+    return this.enrollmentModel.findOne({
+      userId: new Types.ObjectId(userId),
+      courseId: new Types.ObjectId(courseId),
+    });
+  }
+
+  /**
+   * Obtener todos los enrollments de un usuario
    */
   async findUserEnrollments(userId: string) {
-    return this.enrollmentModel
-      .find({
-        userId: new Types.ObjectId(userId),
-        status: 'paid',
-      })
-      .populate('courseId');
+    return this.enrollmentModel.find({
+      userId: new Types.ObjectId(userId),
+    });
   }
 }
