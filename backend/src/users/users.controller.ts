@@ -1,20 +1,27 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import {
+  Controller,
+  Get,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { AuthGuard } from "@nestjs/passport";
+import type { Request } from "express";
 
-@Controller('users')
+@UseGuards(AuthGuard("jwt"))
+@Controller("users")
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get('me')
-  getMe(@Req() req) {
-    return this.usersService.findById(req.user.userId);
-  }
+  /**
+   * GET /users/me/courses
+   */
+  @Get("me/courses")
+  async getMyCourses(@Req() req: Request) {
+    const user = req.user as { sub: string };
 
-  @UseGuards(JwtAuthGuard)
-  @Get('me/courses')
-  getMyCourses(@Req() req) {
-    return this.usersService.getCourses(req.user.userId);
+    return this.usersService.getMyCourses(user.sub);
   }
 }

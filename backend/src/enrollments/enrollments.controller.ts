@@ -1,17 +1,22 @@
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
-import { EnrollmentsService } from './enrollments.service';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Req, UseGuards } from "@nestjs/common";
+import { EnrollmentsService } from "./enrollments.service";
+import { AuthGuard } from "@nestjs/passport";
+import type { Request } from "express";
 
-@Controller('enrollments')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard("jwt"))
+@Controller("enrollments")
 export class EnrollmentsController {
-  constructor(private enrollmentsService: EnrollmentsService) {}
+  constructor(
+    private readonly enrollmentsService: EnrollmentsService,
+  ) {}
 
-  /**
-   * Retorna todos los enrollments del usuario logueado
-   */
-  @Get('me')
-  getMyEnrollments(@Req() req) {
-    return this.enrollmentsService.findUserEnrollments(req.user.sub);
+  @Get("my")
+  async getMyEnrollments(@Req() req: Request) {
+    // req.user viene del JwtStrategy
+    const user = req.user as { sub: string };
+
+    return this.enrollmentsService.findUserEnrollments(
+      user.sub,
+    );
   }
 }

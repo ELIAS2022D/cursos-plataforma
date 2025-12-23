@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,30 +9,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-
-type User = {
-  id: string;
-  fullName: string;
-  email: string;
-};
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, logout } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    router.push("/login");
+  function handleLogout() {
+    logout();
+    router.push("/");
     router.refresh();
-    window.location.href = "/"
   }
 
   return (
@@ -70,7 +55,10 @@ export default function Navbar() {
                   Dashboard
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onClick={logout} className="text-red-500">
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-500"
+                >
                   Cerrar sesión
                 </DropdownMenuItem>
               </DropdownMenuContent>

@@ -1,28 +1,37 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
-
-export type EnrollmentDocument = Enrollment & Document;
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Types } from "mongoose";
+import { User } from "../../users/schemas/user.schema";
+import { Course } from "../../courses/schemas/course.schema";
 
 @Schema({ timestamps: true })
 export class Enrollment {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: Types.ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'Course', required: true })
-  courseId: Types.ObjectId;
+  @Prop({
+    type: Types.ObjectId,
+    ref: User.name,
+    required: true,
+  })
+  user: Types.ObjectId;
 
   @Prop({
-    type: String,
-    enum: ['pending', 'paid', 'cancelled'],
-    default: 'pending',
+    type: Types.ObjectId,
+    ref: Course.name,
+    required: true,
   })
-  status: 'pending' | 'paid' | 'cancelled';
+  course: Types.ObjectId;
 
-  @Prop({ default: 'mercadopago' })
-  paymentProvider: string;
+  @Prop({
+    default: "pending",
+    enum: ["pending", "paid", "cancelled"],
+  })
+  status: "pending" | "paid" | "cancelled";
 
-  @Prop()
-  paymentId?: string;
+  // ✅ NUEVO – para saber quién procesó el pago
+  @Prop({
+    default: "mercadopago",
+  })
+  paymentProvider: "mercadopago";
 }
 
-export const EnrollmentSchema = SchemaFactory.createForClass(Enrollment);
+export type EnrollmentDocument = Enrollment & Document;
+export const EnrollmentSchema =
+  SchemaFactory.createForClass(Enrollment);

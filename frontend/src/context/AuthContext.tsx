@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { setAuthToken } from "@/services/api";
 
 type User = {
   id: string;
@@ -13,20 +12,21 @@ type AuthContextType = {
   user: User | null;
   login: (token: string, user: User) => void;
   logout: () => void;
+  isAuthenticated: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const isAuthenticated = !!user;
 
-  // 🔁 Restaurar sesión al recargar
+  // 🔁 Restaurar sesión
   useEffect(() => {
     const token = localStorage.getItem("token");
     const savedUser = localStorage.getItem("user");
 
     if (token && savedUser) {
-      setAuthToken(token);
       setUser(JSON.parse(savedUser));
     }
   }, []);
@@ -34,19 +34,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   function login(token: string, user: User) {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
-    setAuthToken(token);
     setUser(user);
   }
 
   function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setAuthToken(null);
     setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, isAuthenticated }}
+    >
       {children}
     </AuthContext.Provider>
   );

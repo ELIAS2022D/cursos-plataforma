@@ -1,17 +1,20 @@
-import api from "./api"
+import api from "./api";
 
-interface LoginPayload {
-  email: string
-  password: string
-}
+export type LoginResponse = {
+  access_token: string;
+  user: {
+    id: string;
+    fullName: string;
+    email: string;
+  };
+};
 
-interface LoginResponse {
-  access_token: string
-}
+type LoginPayload = {
+  email: string;
+  password: string;
+};
 
-export const login = async (
-  payload: LoginPayload
-): Promise<LoginResponse> => {
-  const res = await api.post<LoginResponse>("/auth/login", payload)
-  return res.data
+export async function login(payload: LoginPayload): Promise<LoginResponse> {
+  const res = await api.post("/auth/login", payload);
+  return res.data;
 }
