@@ -1,26 +1,21 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { ObjectId } from 'mongodb'
+import { Document } from 'mongoose'
 
 @Schema({ timestamps: true })
 export class Appointment extends Document {
-  @Prop({ required: true })
-  user: string;
+  @Prop({ type: ObjectId, required: true })
+  userId: ObjectId
 
   @Prop({ required: true })
-  service: string;
+  service: string
 
   @Prop({ required: true })
-  date: Date;
-
-  @Prop({
-    default: 'scheduled',
-    enum: ['scheduled', 'cancelled', 'completed'],
-  })
-  status: string;
+  date: string
 
   @Prop()
-  notes?: string;
+  notes?: string
 }
 
 export const AppointmentSchema =
-  SchemaFactory.createForClass(Appointment);
+  SchemaFactory.createForClass(Appointment)

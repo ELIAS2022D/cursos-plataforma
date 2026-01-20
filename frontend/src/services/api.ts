@@ -1,13 +1,7 @@
 import axios from "axios"
 
-const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL
-
-if (!baseURL) {
-  throw new Error("NEXT_PUBLIC_BACKEND_URL no está definida")
-}
-
 const api = axios.create({
-  baseURL,
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
 })
 
 api.interceptors.request.use((config) => {

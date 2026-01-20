@@ -4,10 +4,10 @@ import {
   Body,
   Req,
   UseGuards,
-} from "@nestjs/common";
-import { PaymentsService } from "./payments.service";
-import { AuthGuard } from "@nestjs/passport";
-import type { Request } from "express";
+} from "@nestjs/common"
+import { PaymentsService } from "./payments.service"
+import { AuthGuard } from "@nestjs/passport"
+import type { AuthRequest } from "../auth/auth-request.type"
 
 @UseGuards(AuthGuard("jwt"))
 @Controller("payments")
@@ -18,14 +18,12 @@ export class PaymentsController {
 
   @Post("create")
   async createPayment(
-    @Req() req: Request,
+    @Req() req: AuthRequest,
     @Body("courseId") courseId: string,
   ) {
-    const user = req.user as { sub: string };
-
     return this.paymentsService.createPayment(
       courseId,
-      user.sub,
-    );
+      req.user.id,
+    )
   }
 }

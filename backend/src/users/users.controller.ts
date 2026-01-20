@@ -1,9 +1,4 @@
-import {
-  Controller,
-  Get,
-  Req,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Get, Req, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { AuthGuard } from "@nestjs/passport";
 import type { Request } from "express";
@@ -15,13 +10,10 @@ export class UsersController {
     private readonly usersService: UsersService,
   ) {}
 
-  /**
-   * GET /users/me/courses
-   */
-  @Get("me/courses")
-  async getMyCourses(@Req() req: Request) {
-    const user = req.user as { sub: string };
-
-    return this.usersService.getMyCourses(user.sub);
+  @Get("me")
+  getMe(@Req() req: Request) {
+    return this.usersService.findById(
+      req.user!.id,
+    );
   }
 }

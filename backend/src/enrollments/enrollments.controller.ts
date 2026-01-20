@@ -13,10 +13,10 @@ export class EnrollmentsController {
   @Get("my")
   async getMyEnrollments(@Req() req: Request) {
     // req.user viene del JwtStrategy
-    const user = req.user as { sub: string };
+    const user = req.user as { id: string; email: string };
 
     return this.enrollmentsService.findUserEnrollments(
-      user.sub,
+      user.id,
     );
   }
 }

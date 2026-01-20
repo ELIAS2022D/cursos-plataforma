@@ -32,6 +32,7 @@ export default function Navbar() {
         {/* MENU */}
         <nav className="flex items-center gap-4">
           <Link href="/nosotros">Nosotros</Link>
+          <Link href="/turnos">Turnos</Link>
 
           {!user && (
             <>

@@ -1,67 +1,78 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Appointment } from './schemas/appointment.schema';
-
-const APPOINTMENT_DURATION_MINUTES = 60;
+import { Injectable, Logger, BadRequestException } from "@nestjs/common"
+import { InjectModel } from "@nestjs/mongoose"
+import { Model, Types } from "mongoose"
+import { Appointment } from "./schemas/appointment.schema"
 
 @Injectable()
 export class AppointmentsService {
+  private readonly logger = new Logger(AppointmentsService.name)
+
   constructor(
     @InjectModel(Appointment.name)
-    private readonly appointmentModel: Model<Appointment>,
+    private appointmentModel: Model<Appointment>,
   ) {}
 
-  async create(userId: string, data: any) {
-    const startDate = new Date(data.date);
-    const endDate = new Date(startDate);
-    endDate.setMinutes(
-      endDate.getMinutes() + APPOINTMENT_DURATION_MINUTES,
-    );
+  async create(data: {
+    userId: string
+    service: string
+    date: string
+    notes?: string
+  }) {
+    this.logger.log("=== CREATE APPOINTMENT ===")
+    this.logger.log(`UserId: ${data.userId}`)
+    this.logger.log(`Service: ${data.service}`)
+    this.logger.log(`Date received: ${data.date}`)
 
-    const overlapping = await this.appointmentModel.findOne({
-      status: 'scheduled',
-      date: {
-        $lt: endDate,
-        $gte: startDate,
-      },
-    });
-
-    if (overlapping) {
-      throw new BadRequestException(
-        'El horario seleccionado no está disponible',
-      );
-    }
-
-    return this.appointmentModel.create({
-      user: userId,
+    /**
+     * VALIDACIÓN DE DISPONIBILIDAD
+     * (misma fecha, mismo servicio)
+     */
+    const existing = await this.appointmentModel.findOne({
+      date: data.date,
       service: data.service,
-      date: startDate,
-      notes: data.notes,
-    });
-  }
+    })
 
-  findByUser(userId: string) {
-    return this.appointmentModel
-      .find({ user: userId })
-      .sort({ date: 1 });
-  }
+    this.logger.log(
+      `Existing appointment: ${existing ? "FOUND" : "NOT FOUND"}`,
+    )
 
-  async cancel(userId: string, appointmentId: string) {
-    const appointment = await this.appointmentModel.findOne({
-      _id: appointmentId,
-      user: userId,
-    });
-
-    if (!appointment) {
-      throw new NotFoundException('Turno no encontrado');
+    if (existing) {
+      this.logger.warn(
+        `Turno NO disponible → date=${data.date} service=${data.service}`,
+      )
+      throw new BadRequestException("Ese turno ya no está disponible")
     }
 
-    appointment.status = 'cancelled';
-    return appointment.save();
+    const created = await this.appointmentModel.create({
+      ...data,
+      userId: new Types.ObjectId(data.userId),
+    })
+
+    this.logger.log(`Appointment CREATED → id=${created._id}`)
+
+    return created
+  }
+
+  async getByDate(date: string) {
+    this.logger.log(`GET BY DATE → date=${date}`)
+
+    const results = await this.appointmentModel.find(
+      { date },
+      { time: 1, _id: 0 },
+    )
+
+    this.logger.log(
+      `Appointments found for ${date}: ${results.length}`,
+    )
+
+    return results
+  }
+
+  async getMine(userId: string) {
+    this.logger.log(`GET MINE → userId=${userId}`)
+
+    return this.appointmentModel.find({
+      userId: new Types.ObjectId(userId),
+    })
   }
 }
