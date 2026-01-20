@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
+import { Module } from "@nestjs/common"
+import { MongooseModule } from "@nestjs/mongoose"
+import { ConfigModule } from "@nestjs/config"
 
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { CoursesModule } from './courses/courses.module';
-import { OrdersModule } from './orders/orders.module';
-import { PaymentsModule } from './payments/payments.module';
-import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { UsersModule } from "./users/users.module"
+import { AuthModule } from "./auth/auth.module"
+import { CoursesModule } from "./courses/courses.module"
+import { OrdersModule } from "./orders/orders.module"
+import { PaymentsModule } from "./payments/payments.module"
+import { EnrollmentsModule } from "./enrollments/enrollments.module"
+import { AppointmentsModule } from "./appointments/appointments.module"
+import { NotificationsModule } from "./notifications/notifications.module"
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
     OrdersModule,
     PaymentsModule,
     EnrollmentsModule,
+    AppointmentsModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}
