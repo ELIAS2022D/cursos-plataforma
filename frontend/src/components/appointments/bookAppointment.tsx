@@ -1,14 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
-import { getAppointmentsByDate, createAppointment } from "@/services/appointments"
-
-type AppointmentDTO = {
-  time?: string
-  date?: string
-  service?: string
-}
+import {
+  getAppointmentsByDate,
+  createAppointment,
+  Appointment,
+} from "@/services/appointments"
 
 const HOURS = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"]
 
@@ -17,38 +15,15 @@ export default function BookAppointment() {
   const [taken, setTaken] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
 
+  // Servicio real (podés reemplazar por un select más adelante)
+  const [service, setService] = useState("Turno web")
+
   useEffect(() => {
     if (!date) return
 
     getAppointmentsByDate(date)
-      .then((data: AppointmentDTO[]) => {
-        // Preferimos `time` si viene del backend
-        const hoursFromTime = data
-          .map((a) => a.time)
-          .filter((t): t is string => typeof t === "string" && t.length > 0)
-
-        if (hoursFromTime.length > 0) {
-          setTaken(hoursFromTime)
-          return
-        }
-
-        // Si el backend devuelve `service` como horario, lo usamos
-        const hoursFromService = data
-          .map((a) => a.service)
-          .filter((t): t is string => typeof t === "string" && t.length > 0)
-
-        if (hoursFromService.length > 0) {
-          setTaken(hoursFromService)
-          return
-        }
-
-        // Fallback por si devuelve `date` como datetime
-        const hoursFromDate = data
-          .map((a) => a.date)
-          .filter((d): d is string => typeof d === "string" && d.length > 0)
-          .map((d) => new Date(d).toISOString().substring(11, 16))
-
-        setTaken(hoursFromDate)
+      .then((data: Appointment[]) => {
+        setTaken(data.map((a) => a.time))
       })
       .catch((error: any) => {
         console.error("Error cargando turnos por fecha:", error)
@@ -60,11 +35,10 @@ export default function BookAppointment() {
     try {
       setLoading(true)
 
-      // ✅ El backend espera: { service, date, notes? }
-      // Usamos `service` como el slot horario (por ahora)
       await createAppointment({
         date,
-        service: time,
+        time,
+        service,
       })
 
       setTaken((prev) => [...prev, time])
@@ -80,12 +54,10 @@ export default function BookAppointment() {
           alert(typeof message === "string" ? message : "No se pudo reservar el turno.")
           return
         }
-
         if (status === 401) {
           alert("Tenés que iniciar sesión para reservar un turno.")
           return
         }
-
         if (status === 403) {
           alert("Tu sesión expiró. Volvé a iniciar sesión.")
           return
@@ -108,6 +80,14 @@ export default function BookAppointment() {
         className="border p-2 rounded"
         value={date}
         onChange={(e) => setDate(e.target.value)}
+      />
+
+      <input
+        type="text"
+        className="border p-2 rounded w-full"
+        value={service}
+        onChange={(e) => setService(e.target.value)}
+        placeholder="Servicio (ej: Reparación notebook)"
       />
 
       {date && (

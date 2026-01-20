@@ -7,10 +7,13 @@ import {
   Req,
   UseGuards,
   Logger,
+  Param,
 } from "@nestjs/common"
 import { AppointmentsService } from "./appointments.service"
 import { AuthGuard } from "@nestjs/passport"
 import type { AuthRequest } from "../auth/auth-request.type"
+import { CreateAppointmentDto } from "./dto/create-appointment.dto"
+import { ByDateQueryDto } from "./dto/by-date.query.dto"
 
 @Controller("appointments")
 export class AppointmentsController {
@@ -20,52 +23,42 @@ export class AppointmentsController {
     private readonly appointmentsService: AppointmentsService,
   ) {}
 
-  // 🔓 PUBLICO
   @Get("by-date")
-  getByDate(@Query("date") date: string) {
+  getByDate(@Query() query: ByDateQueryDto) {
+    const { date } = query
     this.logger.log(`GET /appointments/by-date → date=${date}`)
     return this.appointmentsService.getByDate(date)
   }
 
-  // 🔐 PRIVADO
   @UseGuards(AuthGuard("jwt"))
   @Post()
-  async create(
-    @Req() req: AuthRequest,
-    @Body("service") service: string,
-    @Body("date") date: string,
-    @Body("notes") notes?: string,
-  ) {
+  async create(@Req() req: AuthRequest, @Body() dto: CreateAppointmentDto) {
     this.logger.log("POST /appointments")
     this.logger.log(`User ID: ${req.user.id}`)
-    this.logger.log(`Service: ${service}`)
-    this.logger.log(`Date: ${date}`)
-    this.logger.log(`Notes: ${notes ?? "—"}`)
+    this.logger.log(`User Email: ${req.user.email}`)
+    this.logger.log(`Service: ${dto.service}`)
+    this.logger.log(`Date: ${dto.date}`)
+    this.logger.log(`Time: ${dto.time}`)
 
-    try {
-      const result = await this.appointmentsService.create({
-        userId: req.user.id,
-        service,
-        date,
-        notes,
-      })
-
-      this.logger.log("Turno creado correctamente")
-      return result
-    } catch (error) {
-      this.logger.error(
-        "Error al crear turno",
-        error?.stack || error,
-      )
-      throw error
-    }
+    return this.appointmentsService.create({
+      userId: req.user.id,
+      userEmail: req.user.email,
+      service: dto.service,
+      date: dto.date,
+      time: dto.time,
+      notes: dto.notes,
+    })
   }
 
-  // 🔐 PRIVADO
   @UseGuards(AuthGuard("jwt"))
   @Get("mine")
   getMine(@Req() req: AuthRequest) {
-    this.logger.log(`GET /appointments/mine → userId=${req.user.id}`)
     return this.appointmentsService.getMine(req.user.id)
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Post(":id/cancel")
+  cancel(@Req() req: AuthRequest, @Param("id") id: string) {
+    return this.appointmentsService.cancel(id, req.user.id)
   }
 }
